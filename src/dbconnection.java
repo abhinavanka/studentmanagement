@@ -1,4 +1,6 @@
+import java.io.FileInputStream;
 import java.sql.*;
+import java.util.Properties;
 
 public class dbconnection {
 
@@ -7,14 +9,17 @@ public class dbconnection {
     public static Connection getConnection() {
         try {
             if (con == null) {
+                Properties props = new Properties();
+                try (FileInputStream in = new FileInputStream("config.properties")) {
+                    props.load(in);
+                }
 
-                // IMPORTANT: Load MySQL driver
                 Class.forName("com.mysql.cj.jdbc.Driver");
 
                 con = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/student_db",
-                    "root",
-                    "abhinavanka21"
+                    props.getProperty("db.url"),
+                    props.getProperty("db.user"),
+                    props.getProperty("db.password")
                 );
             }
         } catch (Exception e) {
